@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30225.117
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FleckTest", "FleckTest\FleckTest.csproj", "{2855F388-26FC-40EB-9CED-8B4B2486CA44}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2855F388-26FC-40EB-9CED-8B4B2486CA44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2855F388-26FC-40EB-9CED-8B4B2486CA44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2855F388-26FC-40EB-9CED-8B4B2486CA44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2855F388-26FC-40EB-9CED-8B4B2486CA44}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {46FB6F50-9A8C-4199-8D7E-426C5F394FDA}
+	EndGlobalSection
+EndGlobal

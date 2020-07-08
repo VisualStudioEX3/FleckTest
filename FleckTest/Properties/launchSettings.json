@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FleckTest": {
+      "commandName": "Project",
+      "commandLineArgs": "8905"
+    }
+  }
+}
