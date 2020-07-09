@@ -15,15 +15,6 @@ namespace FleckTest.Services
         static readonly UserData SERVER_USER = new UserData("Server", new ConsoleColorScheme(ConsoleColor.DarkYellow, ConsoleColor.Black));
         #endregion
 
-        #region Enums
-        enum LogType
-        {
-            Normal,
-            Warning,
-            Error
-        }
-        #endregion
-
         #region Internal vars
         WebSocketServer _server;
         #endregion
@@ -70,7 +61,7 @@ namespace FleckTest.Services
         /// <param name="address">Address to create server.</param>
         public void Create(string address)
         {
-            Console.WriteLine("Creating server...");
+            FleckLog.Info("Creating server...");
 
             this._server = new WebSocketServer(address);
             this._server.Start(socket =>
@@ -79,7 +70,7 @@ namespace FleckTest.Services
                 socket.OnOpen = () =>
                 {
                     Guid id = socket.ConnectionInfo.Id;
-                    this.Print($"New conection from {socket.ConnectionInfo.ClientIpAddress}:{socket.ConnectionInfo.ClientPort} with id {id}.", LogType.Warning);
+                    FleckLog.Info($"New conection from {socket.ConnectionInfo.ClientIpAddress}:{socket.ConnectionInfo.ClientPort} with id {id}.");
                     socket.Send(id.ToByteArray());
                 };
 
@@ -121,7 +112,7 @@ namespace FleckTest.Services
                     }
                     catch (Exception ex)
                     {
-                        this.Print($"OnBinary(): {ex}", LogType.Error);
+                        FleckLog.Error($"OnBinary(): {ex.Message}", ex);
                     }
                 };
             });
@@ -129,7 +120,7 @@ namespace FleckTest.Services
             // TODO: Run ping task to ping all sockets and watch when any connection is lost (no clossed properly).
 
             // Wait to press any key on server to stop it:
-            this.Print("Press any key to stop server...", LogType.Normal);
+            FleckLog.Info("Press any key to stop server...");
             Console.ReadKey();
         }
 
@@ -142,34 +133,10 @@ namespace FleckTest.Services
         }
 
         /// <summary>
-        /// Prints message on server console.
-        /// </summary>
-        /// <param name="message">String value that contains the message.</param>
-        /// <param name="type"><see cref="LogType"/> level. Each level prints the message with a specific color.</param>
-        void Print(string message, LogType type)
-        {
-            switch (type)
-            {
-                case LogType.Warning:
-                    Console.ForegroundColor = ConsoleColor.DarkYellow;
-                    break;
-                case LogType.Error:
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                    break;
-                default:
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    break;
-            }
-
-            Console.WriteLine($"{DateTime.Now.ToShortTimeString()}: {message}");
-            Console.ResetColor();
-        }
-
-        /// <summary>
         /// Sends a special message to all active connections.
         /// </summary>
         /// <param name="message">String value that contains the message.</param>
-        /// <param name="ignore"></param>
+        /// <param name="ignore">Optional. Connection to ignore the message.</param>
         void SendAnouncement(string message, IWebSocketConnection ignore = null)
         {
             this.SendServerMessage(new ServerMessage(ChatServer.SERVER_USER, message, true), ignore);

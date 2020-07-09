@@ -36,6 +36,7 @@ namespace FleckTest.Services
         public IConsoleChatMessageWriter ConsoleWriter { get; set; }
 
         #endregion
+
         #region Constructor & destructor
         /// <summary>
         /// Constructor (called by IoC container).
@@ -74,10 +75,10 @@ namespace FleckTest.Services
 
             try
             {
-                Console.WriteLine("Connecting to server...");
+                Fleck.FleckLog.Info("Connecting to server...");
                 await this._client.ConnectAsync(new Uri(address), CancellationToken.None);
 
-                Console.WriteLine("Connection stablished!");
+                Fleck.FleckLog.Info("Connection established!");
                 this.UserData = await this.Login();
 
                 this._listener = this.StartListener();
@@ -89,7 +90,7 @@ namespace FleckTest.Services
             }
             catch (WebSocketException ex)
             {
-                Console.WriteLine($"Connection error: {ex.Message}");
+                Fleck.FleckLog.Error($"Connection error: {ex.Message}", ex);
                 return false;
             }
         }
@@ -114,7 +115,7 @@ namespace FleckTest.Services
                     await this._client.CloseAsync(WebSocketCloseStatus.NormalClosure, "Clossing connection with server.", CancellationToken.None);
                 }
             }
-            catch
+            finally
             {
                 // Avoid exceptions by pending transfers between server and client during the closing process and them are not would cancelled already.
             }

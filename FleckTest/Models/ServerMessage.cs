@@ -1,6 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Runtime.Serialization;
 
 namespace FleckTest.Models
 {
@@ -73,60 +71,4 @@ namespace FleckTest.Models
         } 
         #endregion
     }
-
-    //public class ServerMessage2
-    //{
-    //    ReadOnlyMemory<byte> _serialized;
-
-    //    public readonly UserData user;
-    //    public readonly DateTime timeStamp;
-    //    public readonly string message;
-    //    public readonly bool isAServerAnouncement;
-
-    //    public ServerMessage(UserData user, string message, bool isAServerAnouncement)
-    //    {
-    //        this.user = user;
-    //        this.timeStamp = DateTime.Now;
-    //        this.message = message;
-    //        this.isAServerAnouncement = isAServerAnouncement;
-
-    //        var buffer = new BinaryWriter(new MemoryStream());
-    //        {
-    //            byte[] userData = this.user.Serialize().ToArray();
-
-    //            buffer.Write(userData.Length);
-    //            buffer.Write(userData);
-    //            buffer.Write(this.timeStamp.Ticks);
-    //            buffer.Write(this.message);
-    //            buffer.Write(this.isAServerAnouncement);
-
-    //            this._serialized = new ReadOnlyMemory<byte>((buffer.BaseStream as MemoryStream).GetBuffer());
-    //        }
-    //    }
-
-    //    public ServerMessage(ReadOnlyMemory<byte> data)
-    //    {
-    //        try
-    //        {
-    //            var buffer = new BinaryReader(new MemoryStream(data.ToArray()));
-    //            {
-    //                this.user = new UserData(buffer.ReadBytes(buffer.ReadInt32()).AsMemory());
-    //                this.timeStamp = new DateTime(buffer.ReadInt64());
-    //                this.message = buffer.ReadString();
-    //                this.isAServerAnouncement = buffer.ReadBoolean();
-    //            }
-    //        }
-    //        catch (Exception ex)
-    //        {
-    //            throw new SerializationException($"ServerMessage: Error deserializing input data. {ex}");
-    //        }
-
-    //        this._serialized = data;
-    //    }
-
-    //    public ReadOnlyMemory<byte> Serialize()
-    //    {
-    //        return this._serialized;
-    //    }
-    //}
 }

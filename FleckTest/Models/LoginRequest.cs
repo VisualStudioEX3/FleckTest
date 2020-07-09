@@ -1,6 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Runtime.Serialization;
 
 namespace FleckTest.Models
 {
@@ -53,49 +51,4 @@ namespace FleckTest.Models
         } 
         #endregion
     }
-
-    //public class LoginRequest2
-    //{
-    //    ReadOnlyMemory<byte> _serialized;
-
-    //    public readonly Guid id;
-    //    public readonly string userName;
-
-    //    public LoginRequest(Guid id, string userName)
-    //    {
-    //        this.id = id;
-    //        this.userName = userName;
-
-    //        var buffer = new BinaryWriter(new MemoryStream());
-    //        {
-    //            buffer.Write(this.id.ToByteArray());
-    //            buffer.Write(this.userName);
-
-    //            this._serialized = new ReadOnlyMemory<byte>((buffer.BaseStream as MemoryStream).GetBuffer());
-    //        }
-    //    }
-
-    //    public LoginRequest(ReadOnlyMemory<byte> data)
-    //    {
-    //        try
-    //        {
-    //            var buffer = new BinaryReader(new MemoryStream(data.ToArray()));
-    //            {
-    //                this.id = new Guid(buffer.ReadBytes(16).AsMemory().ToArray());
-    //                this.userName = buffer.ReadString();
-    //            }
-    //        }
-    //        catch (Exception ex)
-    //        {
-    //            throw new SerializationException($"Login request: Error deserializing input data. {ex}");
-    //        }
-
-    //        this._serialized = data;
-    //    }
-
-    //    public ReadOnlyMemory<byte> GetSerializedData()
-    //    {
-    //        return this._serialized;
-    //    }
-    //}
 }
