@@ -130,16 +130,6 @@ namespace FleckTest.Services
                         this.RemoveSession(socket.ConnectionInfo.Id);
                     }
                 };
-
-                socket.OnPing = data =>
-                {
-                    Logger.Debug($"Ping received from {this.Users[socket.ConnectionInfo.Id].Name}");
-                };
-
-                socket.OnPong = data =>
-                {
-                    Logger.Debug($"Pong received from {this.Users[socket.ConnectionInfo.Id].Name}");
-                };
             });
 
             Logger.Warn("Press any key to stop server...");

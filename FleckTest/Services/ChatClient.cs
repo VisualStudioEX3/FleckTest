@@ -15,7 +15,7 @@ namespace FleckTest.Services
     {
         #region Internal vars
         ClientWebSocket _client;
-        CancellationTokenSource _listenerCancellationTokenSource;
+        CancellationTokenSource _tokenSource;
         Task _listener;
         #endregion
 
@@ -34,7 +34,6 @@ namespace FleckTest.Services
         /// Console write formatter service.
         /// </summary>
         public IConsoleChatMessageWriter ConsoleWriter { get; set; }
-
         #endregion
 
         #region Constructor & destructor
@@ -48,7 +47,7 @@ namespace FleckTest.Services
             this.UserInput = userInput;
             this.ConsoleWriter = consoleWriter;
 
-            this._listenerCancellationTokenSource = new CancellationTokenSource();
+            this._tokenSource = new CancellationTokenSource();
         }
         
         public void Dispose()
@@ -86,9 +85,6 @@ namespace FleckTest.Services
 
                 this._listener = this.StartListener();
 
-                // TODO: Start ping task to server.
-                // TODO: Start pong task from server.
-
                 this.UserInput.Run((message) =>
                 {
                     this.SendMessage(message);
@@ -110,8 +106,8 @@ namespace FleckTest.Services
         {
             if (this._client.State == WebSocketState.Open)
             {
-                this._listenerCancellationTokenSource.Cancel();
-                this._listener.Dispose();
+                this._tokenSource.Cancel();
+                this._listener?.Dispose();
 
                 this._client.Abort();
             }
@@ -192,7 +188,15 @@ namespace FleckTest.Services
 
         async void SendAsync(ReadOnlyMemory<byte> data, WebSocketMessageType type)
         {
-            await this._client.SendAsync(data, type, true, CancellationToken.None);
+            try
+            {
+                await this._client.SendAsync(data, type, true, CancellationToken.None);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Error sending message to server. The session is ended.", ex);
+                this.Dispose();
+            }
         }
 
         /// <summary>
@@ -205,10 +209,10 @@ namespace FleckTest.Services
             {
                 while (this._client.State == WebSocketState.Open)
                 {
-                    ReadOnlyMemory<byte> buffer = await this.ReceiveDataAsync(this._listenerCancellationTokenSource.Token);
+                    ReadOnlyMemory<byte> buffer = await this.ReceiveDataAsync(this._tokenSource.Token);
                     this.ConsoleWriter.Write(new ServerMessage(buffer));
                 }
-            }, this._listenerCancellationTokenSource.Token);
+            }, this._tokenSource.Token);
         }
 
         /// <summary>
@@ -228,8 +232,20 @@ namespace FleckTest.Services
         async Task<ReadOnlyMemory<byte>> ReceiveDataAsync(CancellationToken token)
         {
             var buffer = new Memory<byte>(new byte[SharedConstants.BUFFER_SIZE]);
+            var valueTask = new ValueWebSocketReceiveResult();
 
-            ValueWebSocketReceiveResult valueTask = await this._client.ReceiveAsync(buffer, token);
+            try
+            {
+                valueTask = await this._client.ReceiveAsync(buffer, token);
+            }
+            catch (Exception ex)
+            {
+                if (this._client.State == WebSocketState.Open)
+                {
+                    Logger.Error("Error receiving data from server. The session is ended.", ex);
+                    this.Dispose(); 
+                }
+            }
 
             if (valueTask.Count > 0)
             {
@@ -239,7 +255,7 @@ namespace FleckTest.Services
                 return new ReadOnlyMemory<byte>(data);
             }
 
-            throw new WebSocketException("ChatClient.ReceiveData(): Error receiving data from server.");
+            throw new WebSocketException("Error receiving data from server.");
         }
         #endregion
     }
