@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Fleck;
+using FleckTest.Extensions;
 using FleckTest.Interfaces;
 using FleckTest.Models;
 
@@ -61,7 +62,7 @@ namespace FleckTest.Services
         /// <param name="address">Address to create server.</param>
         public void Create(string address)
         {
-            FleckLog.Info("Creating server...");
+            Logger.Info("Creating server...");
 
             this._server = new WebSocketServer(address);
             this._server.Start(socket =>
@@ -70,7 +71,7 @@ namespace FleckTest.Services
                 socket.OnOpen = () =>
                 {
                     Guid id = socket.ConnectionInfo.Id;
-                    FleckLog.Info($"New conection from {socket.ConnectionInfo.ClientIpAddress}:{socket.ConnectionInfo.ClientPort} with id {id}.");
+                    Logger.Info($"New conection from {socket.ConnectionInfo.ClientIpAddress}:{socket.ConnectionInfo.ClientPort} with id {id}.");
                     socket.Send(id.ToByteArray());
                 };
 
@@ -99,7 +100,17 @@ namespace FleckTest.Services
                     {
                         var logReq = new LoginRequest(data);
 
-                        // TODO: Check for duplicate usernames.
+                        // Check for duplicate usernames.
+                        foreach (var user in this.Users.Values)
+                        {
+                            if (user.Name.ToLower() == logReq.UserName.ToLower())
+                            {
+                                socket.Send(SharedConstants.SERVER_USERNAME_IN_USE.ToByteArray()); // Notify that the username is already registered.
+                                return;
+                            }
+                        }
+
+                        socket.Send(SharedConstants.SERVER_USERNAME_AVAILABLE.ToByteArray()); // Notify that the username is available.
 
                         var newUser = new UserData(logReq.UserName, ConsoleColorScheme.GetNextColorScheme());
 
@@ -112,15 +123,14 @@ namespace FleckTest.Services
                     }
                     catch (Exception ex)
                     {
-                        FleckLog.Error($"OnBinary(): {ex.Message}", ex);
+                        Logger.Error($"OnBinary(): {ex.Message}", ex);
                     }
                 };
             });
 
             // TODO: Run ping task to ping all sockets and watch when any connection is lost (no clossed properly).
 
-            // Wait to press any key on server to stop it:
-            FleckLog.Info("Press any key to stop server...");
+            Logger.Warn("Press any key to stop server...");
             Console.ReadKey();
         }
 
