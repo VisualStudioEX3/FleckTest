@@ -4,6 +4,8 @@ A little chat console program to test Fleck websockets library and IoC with Micr
 * Fleck: https://github.com/statianzo/Fleck
 * Microsoft.Extensions.DependencyInjection: https://github.com/aspnet/DependencyInjection
 
+![FleckTest.jpg](https://github.com/VisualStudioEX3/FleckTest/blob/master/FleckTest.jpg)
+
 ## TODO
-* Implementing ping-pong task in client to check state of the server (to resolve lost connection and ended the session).
-* Create unit test.
+* Implementing ping-pong task or similar in client to check state of the server.
+* Create unit tests.
