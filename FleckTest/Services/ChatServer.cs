@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net.Sockets;
 using Fleck;
 using FleckTest.Extensions;
 using FleckTest.Interfaces;
@@ -78,13 +80,7 @@ namespace FleckTest.Services
                 // Using OnClose event to catch the connections was closed and to remove the user and socket from the server.
                 socket.OnClose = () =>
                 {
-                    Guid id = socket.ConnectionInfo.Id;
-                    UserData user = this.Users[id];
-
-                    this.SendAnouncement($"{user.Name} has left the conversation.", socket);
-
-                    this.Users.Remove(id);
-                    this.Sockets.Remove(id);
+                    this.RemoveSession(socket.ConnectionInfo.Id);
                 };
 
                 // Using OnMessage event to catch any message received from any active connections, to process it, and send back to all connections:
@@ -113,10 +109,7 @@ namespace FleckTest.Services
                         socket.Send(SharedConstants.SERVER_USERNAME_AVAILABLE.ToByteArray()); // Notify that the username is available.
 
                         var newUser = new UserData(logReq.UserName, ConsoleColorScheme.GetNextColorScheme());
-
-                        this.Users.Add(logReq.Id, newUser);
-                        this.Sockets.Add(logReq.Id, socket);
-
+                        this.RegisterSession(logReq.Id, newUser, socket);
                         socket.Send(newUser.GetSerializedData().ToArray());
 
                         this.SendAnouncement($"{logReq.UserName} has entered in conversation.");
@@ -126,12 +119,57 @@ namespace FleckTest.Services
                         Logger.Error($"OnBinary(): {ex.Message}", ex);
                     }
                 };
-            });
 
-            // TODO: Run ping task to ping all sockets and watch when any connection is lost (no clossed properly).
+                // Using OnError to catch forced disconnections from clients and removing their sessions:
+                socket.OnError = ex =>
+                {
+                    if (ex is IOException && 
+                        ex.InnerException is SocketException && 
+                        (ex.InnerException as SocketException).SocketErrorCode == SocketError.ConnectionReset)
+                    {
+                        this.RemoveSession(socket.ConnectionInfo.Id);
+                    }
+                };
+
+                socket.OnPing = data =>
+                {
+                    Logger.Debug($"Ping received from {this.Users[socket.ConnectionInfo.Id].Name}");
+                };
+
+                socket.OnPong = data =>
+                {
+                    Logger.Debug($"Pong received from {this.Users[socket.ConnectionInfo.Id].Name}");
+                };
+            });
 
             Logger.Warn("Press any key to stop server...");
             Console.ReadKey();
+        }
+
+        /// <summary>
+        /// Register new session.
+        /// </summary>
+        /// <param name="id"><see cref="Guid"/> session.</param>
+        /// <param name="user"><see cref="UserData"/> information.</param>
+        /// <param name="connection">Connection.</param>
+        void RegisterSession(Guid id, UserData user, IWebSocketConnection connection)
+        {
+            this.Users.Add(id, user);
+            this.Sockets.Add(id, connection);
+        }
+
+        /// <summary>
+        /// Remove session.
+        /// </summary>
+        /// <param name="id"><see cref="Guid"/> session.</param>
+        void RemoveSession(Guid id)
+        {
+            UserData user = this.Users[id];
+
+            this.SendAnouncement($"{user.Name} has left the conversation.", this.Sockets[id]);
+
+            this.Users.Remove(id);
+            this.Sockets.Remove(id);
         }
 
         /// <summary>

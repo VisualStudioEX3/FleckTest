@@ -17,26 +17,29 @@ namespace FleckTest.Services
         /// <param name="data"><see cref="ServerMessage"/> to process.</param>
         public void Write(ServerMessage data)
         {
-            Console.CursorLeft = 0;
-
-            if (data.IsAServerAnouncement)
+            lock (this)
             {
-                Logger.Warn(data.Message);
-            }
-            else
-            {
-                UserData user = data.User;
-                ConsoleColorScheme color = user.Color;
+                Console.CursorLeft = 0;
 
-                Console.BackgroundColor = color.background;
-                Console.ForegroundColor = color.text;
-                Console.Write($" {data.TimeStamp.ToShortTimeString()} {user.Name} ");
+                if (data.IsAServerAnouncement)
+                {
+                    Logger.Warn(data.Message);
+                }
+                else
+                {
+                    UserData user = data.User;
+                    ConsoleColorScheme color = user.Color;
 
-                Console.BackgroundColor = ConsoleColor.Black;
-                Console.ForegroundColor = color.background;
-                Console.WriteLine($" {data.Message}");
+                    Console.BackgroundColor = color.background;
+                    Console.ForegroundColor = color.text;
+                    Console.Write($" {data.TimeStamp.ToShortTimeString()} {user.Name} ");
 
-                Console.ResetColor();
+                    Console.BackgroundColor = ConsoleColor.Black;
+                    Console.ForegroundColor = color.background;
+                    Console.WriteLine($" {data.Message}");
+
+                    Console.ResetColor();
+                } 
             }
         } 
         #endregion

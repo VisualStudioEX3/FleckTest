@@ -7,6 +7,7 @@
     <Copyright>FleckTest © Visual Studio EX3, José Miguel - 2020</Copyright>
     <PackageProjectUrl>https://github.com/VisualStudioEX3/FleckTest</PackageProjectUrl>
     <RepositoryUrl>https://github.com/VisualStudioEX3/FleckTest</RepositoryUrl>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

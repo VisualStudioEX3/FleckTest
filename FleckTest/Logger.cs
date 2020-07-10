@@ -22,26 +22,35 @@ namespace FleckTest
 
             FleckLog.LogAction = (level, message, ex) =>
             {
-                Console.BackgroundColor = ConsoleColor.Black;
-
-                switch (level)
+                lock (new object())
                 {
-                    case LogLevel.Debug:
-                        Console.ForegroundColor = ConsoleColor.Cyan;
-                        break;
-                    case LogLevel.Error:
-                        Console.ForegroundColor = ConsoleColor.DarkRed;
-                        break;
-                    case LogLevel.Warn:
-                        Console.ForegroundColor = ConsoleColor.DarkYellow;
-                        break;
-                    default:
-                        Console.ForegroundColor = ConsoleColor.White;
-                        break;
-                }
+                    Console.BackgroundColor = ConsoleColor.Black;
 
-                Console.WriteLine($"[{DateTime.Now.ToShortTimeString()}] {message} {(ex is null ? string.Empty : ex.ToString())}");
-                Console.ResetColor();
+                    switch (level)
+                    {
+                        case LogLevel.Debug:
+                            Console.ForegroundColor = ConsoleColor.Cyan;
+                            break;
+                        case LogLevel.Error:
+                            Console.ForegroundColor = ConsoleColor.DarkRed;
+                            break;
+                        case LogLevel.Warn:
+                            Console.ForegroundColor = ConsoleColor.DarkYellow;
+                            break;
+                        default:
+                            Console.ForegroundColor = ConsoleColor.White;
+                            break;
+                    }
+
+                    if (!Logger.ShowFullExceptions && ex != null)
+                    {
+                        message = $"{message} : {ex.Message}";
+                        ex = null;
+                    }
+
+                    Console.WriteLine($"[{DateTime.Now.ToShortTimeString()}] {message} {(ex is null ? string.Empty : ex.ToString())}");
+                    Console.ResetColor(); 
+                }
             };
         } 
         #endregion
@@ -49,12 +58,6 @@ namespace FleckTest
         #region Methods & Functions
         static void Log(string message, LogLevel level, Exception ex = null)
         {
-            if (!Logger.ShowFullExceptions && ex != null)
-            {
-                message = $"{message} : {ex.Message}";
-                ex = null;
-            }
-
             switch (level)
             {
                 case LogLevel.Debug:
