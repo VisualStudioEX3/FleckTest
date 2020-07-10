@@ -29,8 +29,12 @@ namespace FleckTest
                     switch (level)
                     {
                         case LogLevel.Debug:
+#if DEBUG
                             Console.ForegroundColor = ConsoleColor.Cyan;
                             break;
+#else
+                            return;
+#endif
                         case LogLevel.Error:
                             Console.ForegroundColor = ConsoleColor.DarkRed;
                             break;
