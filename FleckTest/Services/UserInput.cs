@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
 using FleckTest.Interfaces;
 
 namespace FleckTest.Services
@@ -8,15 +10,43 @@ namespace FleckTest.Services
     /// </summary>
     public class UserInput : IUserInputCommandProcessor
     {
+        #region Constants
+        const string PROMPT = "@:>";
+        #endregion
+
+        #region Internal vars
+        CancellationTokenSource _tokenSource;
+        CancellationToken _token;
+        #endregion
+
+        #region Methods & Functions
         /// <summary>
         /// Starts a loop to read user input.
         /// </summary>
         /// <param name="onMessage">Event raised when the user typed a valid message to send to server.</param>
         public void Run(Action<string> onMessage)
         {
-            for(;;)
+            this._tokenSource = new CancellationTokenSource();
+            this._token = this._tokenSource.Token;
+
+            // Create a parallel task to print the prompt and update his position when the console prints new lines:
+            Task.Factory.StartNew(() =>
             {
-                //Console.Write("\n>");
+                int row = Console.CursorTop;
+
+                while (!this._token.IsCancellationRequested)
+                {
+                    Console.CursorLeft = 0;
+                    Console.Write(UserInput.PROMPT);
+
+                    while (row == Console.CursorTop) { }
+                    row = Console.CursorTop;
+                }
+            }, this._token);
+
+            while (!this._token.IsCancellationRequested)
+            {
+                Console.CursorLeft = UserInput.PROMPT.Length;
                 string input = Console.ReadLine().Trim();
                 Console.CursorTop--;
 
@@ -30,6 +60,12 @@ namespace FleckTest.Services
                     onMessage?.Invoke(input);
                 }
             }
+        } 
+
+        public void Stop()
+        {
+            this._tokenSource?.Cancel();
         }
+        #endregion
     }
 }

@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net.Sockets;
 using Fleck;
+using FleckTest.Extensions;
 using FleckTest.Interfaces;
 using FleckTest.Models;
 
@@ -13,15 +16,6 @@ namespace FleckTest.Services
     {
         #region Constants
         static readonly UserData SERVER_USER = new UserData("Server", new ConsoleColorScheme(ConsoleColor.DarkYellow, ConsoleColor.Black));
-        #endregion
-
-        #region Enums
-        enum LogType
-        {
-            Normal,
-            Warning,
-            Error
-        }
         #endregion
 
         #region Internal vars
@@ -70,7 +64,7 @@ namespace FleckTest.Services
         /// <param name="address">Address to create server.</param>
         public void Create(string address)
         {
-            Console.WriteLine("Creating server...");
+            Logger.Info("Creating server...");
 
             this._server = new WebSocketServer(address);
             this._server.Start(socket =>
@@ -79,20 +73,14 @@ namespace FleckTest.Services
                 socket.OnOpen = () =>
                 {
                     Guid id = socket.ConnectionInfo.Id;
-                    this.Print($"New conection from {socket.ConnectionInfo.ClientIpAddress}:{socket.ConnectionInfo.ClientPort} with id {id}.", LogType.Warning);
+                    Logger.Info($"New conection from {socket.ConnectionInfo.ClientIpAddress}:{socket.ConnectionInfo.ClientPort} with id {id}.");
                     socket.Send(id.ToByteArray());
                 };
 
                 // Using OnClose event to catch the connections was closed and to remove the user and socket from the server.
                 socket.OnClose = () =>
                 {
-                    Guid id = socket.ConnectionInfo.Id;
-                    UserData user = this.Users[id];
-
-                    this.SendAnouncement($"{user.Name} has left the conversation.", socket);
-
-                    this.Users.Remove(id);
-                    this.Sockets.Remove(id);
+                    this.RemoveSession(socket.ConnectionInfo.Id);
                 };
 
                 // Using OnMessage event to catch any message received from any active connections, to process it, and send back to all connections:
@@ -108,29 +96,70 @@ namespace FleckTest.Services
                     {
                         var logReq = new LoginRequest(data);
 
-                        // TODO: Check for duplicate usernames.
+                        // Check for duplicate usernames.
+                        foreach (var user in this.Users.Values)
+                        {
+                            if (user.Name.ToLower() == logReq.UserName.ToLower())
+                            {
+                                socket.Send(SharedConstants.SERVER_USERNAME_IN_USE.ToByteArray()); // Notify that the username is already registered.
+                                return;
+                            }
+                        }
+
+                        socket.Send(SharedConstants.SERVER_USERNAME_AVAILABLE.ToByteArray()); // Notify that the username is available.
 
                         var newUser = new UserData(logReq.UserName, ConsoleColorScheme.GetNextColorScheme());
-
-                        this.Users.Add(logReq.Id, newUser);
-                        this.Sockets.Add(logReq.Id, socket);
-
+                        this.RegisterSession(logReq.Id, newUser, socket);
                         socket.Send(newUser.GetSerializedData().ToArray());
 
                         this.SendAnouncement($"{logReq.UserName} has entered in conversation.");
                     }
                     catch (Exception ex)
                     {
-                        this.Print($"OnBinary(): {ex}", LogType.Error);
+                        Logger.Error($"OnBinary(): {ex.Message}", ex);
+                    }
+                };
+
+                // Using OnError to catch forced disconnections from clients and removing their sessions:
+                socket.OnError = ex =>
+                {
+                    if (ex is IOException && 
+                        ex.InnerException is SocketException && 
+                        (ex.InnerException as SocketException).SocketErrorCode == SocketError.ConnectionReset)
+                    {
+                        this.RemoveSession(socket.ConnectionInfo.Id);
                     }
                 };
             });
 
-            // TODO: Run ping task to ping all sockets and watch when any connection is lost (no clossed properly).
-
-            // Wait to press any key on server to stop it:
-            this.Print("Press any key to stop server...", LogType.Normal);
+            Logger.Warn("Press any key to stop server...");
             Console.ReadKey();
+        }
+
+        /// <summary>
+        /// Register new session.
+        /// </summary>
+        /// <param name="id"><see cref="Guid"/> session.</param>
+        /// <param name="user"><see cref="UserData"/> information.</param>
+        /// <param name="connection">Connection.</param>
+        void RegisterSession(Guid id, UserData user, IWebSocketConnection connection)
+        {
+            this.Users.Add(id, user);
+            this.Sockets.Add(id, connection);
+        }
+
+        /// <summary>
+        /// Remove session.
+        /// </summary>
+        /// <param name="id"><see cref="Guid"/> session.</param>
+        void RemoveSession(Guid id)
+        {
+            UserData user = this.Users[id];
+
+            this.SendAnouncement($"{user.Name} has left the conversation.", this.Sockets[id]);
+
+            this.Users.Remove(id);
+            this.Sockets.Remove(id);
         }
 
         /// <summary>
@@ -142,34 +171,10 @@ namespace FleckTest.Services
         }
 
         /// <summary>
-        /// Prints message on server console.
-        /// </summary>
-        /// <param name="message">String value that contains the message.</param>
-        /// <param name="type"><see cref="LogType"/> level. Each level prints the message with a specific color.</param>
-        void Print(string message, LogType type)
-        {
-            switch (type)
-            {
-                case LogType.Warning:
-                    Console.ForegroundColor = ConsoleColor.DarkYellow;
-                    break;
-                case LogType.Error:
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                    break;
-                default:
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    break;
-            }
-
-            Console.WriteLine($"{DateTime.Now.ToShortTimeString()}: {message}");
-            Console.ResetColor();
-        }
-
-        /// <summary>
         /// Sends a special message to all active connections.
         /// </summary>
         /// <param name="message">String value that contains the message.</param>
-        /// <param name="ignore"></param>
+        /// <param name="ignore">Optional. Connection to ignore the message.</param>
         void SendAnouncement(string message, IWebSocketConnection ignore = null)
         {
             this.SendServerMessage(new ServerMessage(ChatServer.SERVER_USER, message, true), ignore);

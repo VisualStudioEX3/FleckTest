@@ -4,12 +4,22 @@ using System.Runtime.Serialization;
 
 namespace FleckTest.Models
 {
+    /// <summary>
+    /// Implements a base for a serializable objects.
+    /// </summary>
     public abstract class SerializedObject
     {
+        #region Internal vars
         ReadOnlyMemory<byte> _serialized;
+        #endregion
 
+        #region Methods & Functions
+        /// <summary>
+        /// Serialize data.
+        /// </summary>
+        /// <param name="onSerialize">Event where implements the serialization logic.</param>
         public void Serialize(Action<BinaryWriter> onSerialize)
-        { 
+        {
             var buffer = new BinaryWriter(new MemoryStream());
             {
                 onSerialize?.Invoke(buffer);
@@ -18,6 +28,11 @@ namespace FleckTest.Models
             }
         }
 
+        /// <summary>
+        /// Deserialize data.
+        /// </summary>
+        /// <param name="data">Data deserialize.</param>
+        /// <param name="onDeserialize">Event where implements the deserialization logic.</param>
         public void Deserialize(ReadOnlyMemory<byte> data, Action<BinaryReader> onDeserialize)
         {
             try
@@ -38,5 +53,6 @@ namespace FleckTest.Models
         {
             return this._serialized;
         }
+        #endregion
     }
 }

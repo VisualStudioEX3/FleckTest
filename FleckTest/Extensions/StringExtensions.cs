@@ -4,10 +4,11 @@ using System.Text;
 namespace FleckTest.Extensions
 {
     /// <summary>
-    /// Method extensions for strings.
+    /// Method extensions for <see cref="string"/>s.
     /// </summary>
     public static class StringExtensions
     {
+        #region Methods & Functions
         /// <summary>
         /// Creates a new <see cref="ReadOnlyMemory{Byte}"/> over the portion of the target string.
         /// </summary>
@@ -16,6 +17,7 @@ namespace FleckTest.Extensions
         public static ReadOnlyMemory<byte> AsMemoryByte(this string instance)
         {
             return new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(instance));
-        }
+        } 
+        #endregion
     }
 }

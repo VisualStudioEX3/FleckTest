@@ -13,7 +13,12 @@ namespace FleckTest.Interfaces
         /// Must be implements a loop operation that wait and read user input typed in console and process it.
         /// </summary>
         /// <param name="onMessage">Event raised when the user typed a valid message to send to server. Must be avoid when user enter a defined command.</param>
-        void Run(Action<string> onMessage); 
+        void Run(Action<string> onMessage);
+
+        /// <summary>
+        /// Use to implements manual stop of this service.
+        /// </summary>
+        void Stop();
         #endregion
     }
 }

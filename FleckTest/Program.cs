@@ -14,6 +14,8 @@ namespace FleckTest
         {
             string serverAddress;
 
+            Logger.ShowFullExceptions = false;
+
             if (Program.ReadArgs(args, out serverAddress))
             {
                 Program.InitializeServices();
@@ -85,13 +87,6 @@ namespace FleckTest
                 if (!client.Connect(serverAddress))
                 {
                     onConnectionFail?.Invoke();
-                }
-                else
-                {
-                    client.UserInput.Run((message) =>
-                    {
-                        client.SendMessage(message);
-                    });
                 }
             }
         }
