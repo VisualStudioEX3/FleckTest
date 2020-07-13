@@ -16,12 +16,12 @@ Type `FleckTest.exe %PORT_NUMBER`
 ## Overview and feature list
 * The client currently only implements a basic command to terminate chat session and close the program, `exit`.
 * The server supports, in theory (not tested it), an unlimited user sessions in the unique chat room.
-* Each user has able to register an unique username, any value and lenght except empty string or spaces.
-* The server assign an one color scheme to each user (12 variations only).
-* User messages can be any string value and lenght except empty string or spaces.
-* The server can detect any client lost connection (the client crash or exit using the close window command instead of `exit` command), because this prevent active ghost/abandoned sessions. The clients, at the moment, only catch the error when trying to send a message to a server that was crashed o not closed properly.
+* Each user has able to register an unique username, any value and length except empty string or spaces.
+* The server assign an one color scheme to each user (12 variations).
+* User messages can be any string value and length except empty string or spaces.
+* The server can detect any client lost connection (the client crash or exit using the close window command instead of `exit` command) to avoid active ghost/abandoned sessions. The clients, at now, only catch the error when trying to send a message to a server that was crashed o not closed properly.
 
-FYI: The Visual Studio project has defined a port number in debug profile. You can run multiple instances of the program to run server and multiple clients (using [Debug->Start New Instance](https://docs.microsoft.com/en-us/visualstudio/debugger/debug-multiple-processes?view=vs-2019) command from context menu on project item in __Solution Explorer__ window).
+FYI: The Visual Studio project has defined a port number in debug profile (Project Properties -> Debug tab). You can run multiple instances of the program to run server and multiple clients (using [Debug->Start New Instance](https://docs.microsoft.com/en-us/visualstudio/debugger/debug-multiple-processes?view=vs-2019) command from context menu on project item in __Solution Explorer__ window).
 
 ## Issues/bugs
 * Sometimes, the prompt/input line is not deleted by the last user message printed in console.
@@ -31,8 +31,8 @@ FYI: The Visual Studio project has defined a port number in debug profile. You c
 
 ## TODO list
 * Implementing ping-pong task or similar in client to check state of the server (to end session in client when the server connection is lost).
-* Basic encryption on socket messages (this would be easy to implement in the ServerMessage model implementation).
-* Additional commands like "ping", to send beep sound to all users or an especific user maybe, for example (this might need to extend the IUserInputCommandProcessor service interface).
+* Basic encryption on socket messages (this would be easy to implement in the [ServerMessage](https://github.com/VisualStudioEX3/FleckTest/blob/master/FleckTest/Models/ServerMessage.cs) model implementation).
+* Additional commands like "ping", to send beep sound to all users or an especific user maybe, for example (this might need to extend the [IUserInputCommandProcessor](https://github.com/VisualStudioEX3/FleckTest/blob/master/FleckTest/Interfaces/IUserInputCommandProcessor.cs) service interface).
 * Create unit tests.
 
 ## Disclaimer
