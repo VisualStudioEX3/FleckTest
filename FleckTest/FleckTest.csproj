@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Description>A little chat console program to test Fleck websockets library and IoC with Microsoft Dependency Injection library, developed in C# using .NET Core 3.1.</Description>
-    <Copyright>FleckTest © Visual Studio EX3, José Miguel - 2020</Copyright>
+    <Copyright>FleckTest © Visual Studio EX3, José Miguel Sánchez Fernández - 2020</Copyright>
     <PackageProjectUrl>https://github.com/VisualStudioEX3/FleckTest</PackageProjectUrl>
     <RepositoryUrl>https://github.com/VisualStudioEX3/FleckTest</RepositoryUrl>
     <Version>1.1.0</Version>
