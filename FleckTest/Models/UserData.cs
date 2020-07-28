@@ -26,7 +26,7 @@ namespace FleckTest.Models
 
         #region Constructors
         /// <summary>
-        /// Constructor.
+        /// Creates new instance.
         /// </summary>
         /// <param name="name">User name.</param>
         /// <param name="color"><see cref="ConsoleColorScheme"/> to use with this user messages.</param>
@@ -46,7 +46,7 @@ namespace FleckTest.Models
         }
 
         /// <summary>
-        /// Constructor.
+        /// Creates new instance from a previous serialized one.
         /// </summary>
         /// <param name="data"><see cref="ReadOnlyMemory{byte}"/> that contains a <see cref="UserData"/> in binary format.</param>
         public UserData(ReadOnlyMemory<byte> data)

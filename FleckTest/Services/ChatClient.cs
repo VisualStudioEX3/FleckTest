@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Net.WebSockets;
 using FleckTest.Interfaces;
 using FleckTest.Extensions;
+using FleckTest.Exceptions;
 using FleckTest.Models;
 
 namespace FleckTest.Services
@@ -66,12 +67,12 @@ namespace FleckTest.Services
         /// <param name="address">Server address.</param>
         /// <returns>Returns true if the connection is established.</returns>
         /// <remarks>After sucesfull connection to server, this function request the user name and log in to server.</remarks>
-        public bool Connect(string address)
+        public ChatClientResults Connect(string address)
         {
             return this.ConnectAsync(address).Result;
         }
 
-        async Task<bool> ConnectAsync(string address)
+        async Task<ChatClientResults> ConnectAsync(string address)
         {
             this._client = new ClientWebSocket();
 
@@ -90,12 +91,17 @@ namespace FleckTest.Services
                     this.SendMessage(message);
                 });
 
-                return true;
+                return ChatClientResults.Ok;
+            }
+            catch (LoginException ex)
+            {
+                Logger.Error($"Login cancelled: {ex.Message}");
+                return ChatClientResults.LoginCancelled;
             }
             catch (WebSocketException ex)
             {
                 Logger.Error($"Connection error: {ex.Message}", ex.InnerException);
-                return false;
+                return ChatClientResults.ConnectionError;
             }
         }
 
@@ -120,10 +126,15 @@ namespace FleckTest.Services
         string RequestUserName()
         {
             string userName = string.Empty;
-            while (string.IsNullOrEmpty(userName))
+            while (string.IsNullOrWhiteSpace(userName))
             {
-                Console.Write("Enter a name to log in the chat room: ");
+                Console.Write("Enter a name to log in the chat room (empty name cancel login): ");
                 userName = Console.ReadLine().Trim();
+
+                if (string.IsNullOrEmpty(userName))
+                {
+                    throw new LoginException("The user cancelled the login.");
+                }
             }
 
             return userName;
@@ -140,9 +151,9 @@ namespace FleckTest.Services
 
             // Receive the socket id from server as id to login request:
             data = await this.ReceiveDataAsync();
-            Guid id = new Guid(data.ToArray());
+            var id = new Guid(data.ToArray());
 
-            for (; ;)
+            for (int i = 0; true; i++)
             {
                 userName = this.RequestUserName();
 
@@ -159,7 +170,17 @@ namespace FleckTest.Services
                 }
                 else
                 {
-                    Console.WriteLine("The username is already in use. Type new one and try again.");
+                    Console.Write("The username is already in use. ");
+
+                    if (i < SharedConstants.LOGIN_ATTEMPS)
+                    {
+                        Console.WriteLine("Type new one and try again.");
+                    }
+                    else
+                    {
+                        Console.WriteLine();
+                        throw new LoginException("The user fail to write an available user name to login.");
+                    }
                 }
             }
 

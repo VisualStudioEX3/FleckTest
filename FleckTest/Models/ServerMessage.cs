@@ -31,7 +31,7 @@ namespace FleckTest.Models
 
         #region Constructors
         /// <summary>
-        /// Constructors.
+        /// Creates new instance.
         /// </summary>
         /// <param name="user">User data that sends the message.</param>
         /// <param name="message">Message sended by user.</param>
@@ -56,7 +56,7 @@ namespace FleckTest.Models
         }
 
         /// <summary>
-        /// Constructors.
+        /// Creates new instance from a previous serialized one.
         /// </summary>
         /// <param name="data"><see cref="ReadOnlyMemory{byte}"/> that contains a <see cref="ServerMessage"/> in binary format.</param>
         public ServerMessage(ReadOnlyMemory<byte> data)

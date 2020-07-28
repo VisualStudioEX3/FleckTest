@@ -81,10 +81,9 @@ namespace FleckTest
         static void RunClient(string serverAddress, Action onConnectionFail)
         {
             Console.Title = "Fleck test: client mode";
-
             using (var client = ServiceManager.GetService<IChatClient>())
             {
-                if (!client.Connect(serverAddress))
+                if (client.Connect(serverAddress) == ChatClientResults.ConnectionError)
                 {
                     onConnectionFail?.Invoke();
                 }
@@ -92,7 +91,7 @@ namespace FleckTest
         }
 
         /// <summary>
-        /// Create anmd run server instance.
+        /// Create and run server instance.
         /// </summary>
         /// <param name="address">Address to create the instance.</param>
         static void RunServer(string address)

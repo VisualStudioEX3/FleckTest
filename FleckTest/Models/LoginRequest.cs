@@ -21,7 +21,7 @@ namespace FleckTest.Models
 
         #region Constructors
         /// <summary>
-        /// Constructor.
+        /// Creates new instance.
         /// </summary>
         /// <param name="id"><see cref="Guid"/> to former request.</param>
         /// <param name="userName">User name requested by user.</param>
@@ -38,7 +38,7 @@ namespace FleckTest.Models
         }
 
         /// <summary>
-        /// Constructor.
+        /// Creates new instance from a previous serialized one.
         /// </summary>
         /// <param name="data"><see cref="ReadOnlyMemory{byte}"/> that contains a <see cref="LoginRequest"/> in bianary format.</param>
         public LoginRequest(ReadOnlyMemory<byte> data)
