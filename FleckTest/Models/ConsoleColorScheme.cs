@@ -21,6 +21,19 @@ namespace FleckTest.Models
         public readonly ConsoleColor background;
         #endregion
 
+        #region Operators
+        public static bool operator ==(ConsoleColorScheme a, ConsoleColorScheme b)
+        {
+            return a.text == b.text &&
+                   a.background == b.background;
+        }
+
+        public static bool operator !=(ConsoleColorScheme a, ConsoleColorScheme b)
+        {
+            return !(a == b);
+        }
+        #endregion
+
         #region Constructor
         static ConsoleColorScheme()
         {
@@ -68,7 +81,19 @@ namespace FleckTest.Models
                 case 11: return new ConsoleColorScheme(ConsoleColor.White, ConsoleColor.Red);
                 default: return new ConsoleColorScheme(ConsoleColor.Black, ConsoleColor.White);
             }
-        } 
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null && !(obj is ConsoleColorScheme)) return false;
+
+            return this == (ConsoleColorScheme)obj;
+        }
+
+        public override int GetHashCode()
+        {
+            return (int)this.text ^ (int)this.background;
+        }
         #endregion
     }
 }

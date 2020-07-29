@@ -19,9 +19,24 @@ namespace FleckTest.Models
         public string UserName { get; private set; }
         #endregion
 
+        #region Operators
+        public static bool operator ==(LoginRequest a, LoginRequest b)
+        {
+            if (a == null || b == null) return false;
+
+            return a.Id == b.Id &&
+                   a.UserName == b.UserName;
+        }
+
+        public static bool operator !=(LoginRequest a, LoginRequest b)
+        {
+            return !(a == b);
+        }
+        #endregion
+
         #region Constructors
         /// <summary>
-        /// Constructor.
+        /// Creates new instance.
         /// </summary>
         /// <param name="id"><see cref="Guid"/> to former request.</param>
         /// <param name="userName">User name requested by user.</param>
@@ -38,7 +53,7 @@ namespace FleckTest.Models
         }
 
         /// <summary>
-        /// Constructor.
+        /// Creates new instance from a previous serialized one.
         /// </summary>
         /// <param name="data"><see cref="ReadOnlyMemory{byte}"/> that contains a <see cref="LoginRequest"/> in bianary format.</param>
         public LoginRequest(ReadOnlyMemory<byte> data)
@@ -48,7 +63,21 @@ namespace FleckTest.Models
                 this.Id = new Guid(buffer.ReadBytes(16).AsMemory().ToArray());
                 this.UserName = buffer.ReadString();
             });
-        } 
+        }
+        #endregion
+
+        #region Methods & Functions
+        public override bool Equals(object obj)
+        {
+            if (obj == null && !(obj is LoginRequest)) return false;
+
+            return this == (LoginRequest)obj;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode(); // Keep using the SerializedObject hash code.
+        }
         #endregion
     }
 }

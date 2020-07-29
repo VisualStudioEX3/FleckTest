@@ -7,12 +7,15 @@
     <Copyright>FleckTest © Visual Studio EX3, José Miguel Sánchez Fernández - 2020</Copyright>
     <PackageProjectUrl>https://github.com/VisualStudioEX3/FleckTest</PackageProjectUrl>
     <RepositoryUrl>https://github.com/VisualStudioEX3/FleckTest</RepositoryUrl>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
+    <Company>Visual Studio EX3</Company>
+    <Authors>José Miguel Sánchez Fernández</Authors>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Fleck" Version="1.1.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0-preview.6.20305.6" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0-preview.7.20364.11" />
   </ItemGroup>
 
 </Project>

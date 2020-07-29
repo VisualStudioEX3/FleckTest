@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace FleckTest.Models
 {
@@ -29,9 +30,26 @@ namespace FleckTest.Models
         public bool IsAServerAnouncement { get; private set; }
         #endregion
 
+        #region Operators
+        public static bool operator ==(ServerMessage a, ServerMessage b)
+        {
+            if (a == null || b == null) return false;
+
+            return a.User == b.User &&
+                   a.Message == b.Message &&
+                   a.IsAServerAnouncement == b.IsAServerAnouncement &&
+                   a.TimeStamp == b.TimeStamp;
+        }
+
+        public static bool operator !=(ServerMessage a, ServerMessage b)
+        {
+            return !(a == b);
+        }
+        #endregion
+
         #region Constructors
         /// <summary>
-        /// Constructors.
+        /// Creates new instance.
         /// </summary>
         /// <param name="user">User data that sends the message.</param>
         /// <param name="message">Message sended by user.</param>
@@ -56,7 +74,7 @@ namespace FleckTest.Models
         }
 
         /// <summary>
-        /// Constructors.
+        /// Creates new instance from a previous serialized one.
         /// </summary>
         /// <param name="data"><see cref="ReadOnlyMemory{byte}"/> that contains a <see cref="ServerMessage"/> in binary format.</param>
         public ServerMessage(ReadOnlyMemory<byte> data)
@@ -68,7 +86,21 @@ namespace FleckTest.Models
                 this.Message = buffer.ReadString();
                 this.IsAServerAnouncement = buffer.ReadBoolean();
             });
-        } 
+        }
+        #endregion
+
+        #region Methods & Functions
+        public override bool Equals(object obj)
+        {
+            if (obj == null && !(obj is ServerMessage)) return false;
+
+            return this == (ServerMessage)obj;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode(); // Keep using the SerializedObject hash code.
+        }
         #endregion
     }
 }

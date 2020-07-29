@@ -12,11 +12,9 @@ namespace FleckTest
         #region Methods & Functions
         static void Main(string[] args)
         {
-            string serverAddress;
-
             Logger.ShowFullExceptions = false;
 
-            if (Program.ReadArgs(args, out serverAddress))
+            if (Program.ReadArgs(args, out string serverAddress))
             {
                 Program.InitializeServices();
                 Program.RunClient(serverAddress, () => Program.RunServer(serverAddress));
@@ -38,8 +36,7 @@ namespace FleckTest
 
             if (args.Length > 0)
             {
-                ushort port;
-                if (ushort.TryParse(args[0], out port))
+                if (ushort.TryParse(args[0], out ushort port))
                 {
                     address = $"ws://127.0.0.1:{port}"; // For this test, will be only working in localhost to run the server and client instances.
                 }
@@ -81,10 +78,9 @@ namespace FleckTest
         static void RunClient(string serverAddress, Action onConnectionFail)
         {
             Console.Title = "Fleck test: client mode";
-
             using (var client = ServiceManager.GetService<IChatClient>())
             {
-                if (!client.Connect(serverAddress))
+                if (client.Connect(serverAddress) == ChatClientResults.ConnectionError)
                 {
                     onConnectionFail?.Invoke();
                 }
@@ -92,7 +88,7 @@ namespace FleckTest
         }
 
         /// <summary>
-        /// Create anmd run server instance.
+        /// Create and run server instance.
         /// </summary>
         /// <param name="address">Address to create the instance.</param>
         static void RunServer(string address)

@@ -13,6 +13,18 @@ namespace FleckTest.Models
         ReadOnlyMemory<byte> _serialized;
         #endregion
 
+        #region Operators
+        public static bool operator ==(SerializedObject a, SerializedObject b)
+        {
+            return a._serialized.GetHashCode() == b._serialized.GetHashCode();
+        }
+
+        public static bool operator !=(SerializedObject a, SerializedObject b)
+        {
+            return !(a == b);
+        }
+        #endregion
+
         #region Methods & Functions
         /// <summary>
         /// Serialize data.
@@ -49,9 +61,22 @@ namespace FleckTest.Models
 
             this._serialized = data;
         }
+
         public ReadOnlyMemory<byte> GetSerializedData()
         {
             return this._serialized;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is SerializedObject)) return false;
+
+            return this == (SerializedObject)obj;
+        }
+
+        public override int GetHashCode()
+        {
+            return this._serialized.GetHashCode();
         }
         #endregion
     }

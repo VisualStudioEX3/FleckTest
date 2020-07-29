@@ -3,6 +3,15 @@ using FleckTest.Models;
 
 namespace FleckTest.Interfaces
 {
+    #region Enums
+    public enum ChatClientResults
+    {
+        Ok,
+        ConnectionError,
+        LoginCancelled
+    }
+    #endregion
+
     /// <summary>
     /// Chat Client service interface.
     /// </summary>
@@ -31,7 +40,7 @@ namespace FleckTest.Interfaces
         /// </summary>
         /// <param name="address">Server address.</param>
         /// <returns>Must be return true when the connection is established, and false if occurs any error.</returns>
-        bool Connect(string address);
+        ChatClientResults Connect(string address);
 
         /// <summary>
         /// Implements the close operation.

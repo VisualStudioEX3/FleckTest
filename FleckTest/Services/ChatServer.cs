@@ -154,11 +154,20 @@ namespace FleckTest.Services
         /// <param name="id"><see cref="Guid"/> session.</param>
         void RemoveSession(Guid id)
         {
-            UserData user = this.Users[id];
+            if (this.Users.TryGetValue(id, out UserData user))
+            {
+                this.SendAnouncement($"{user.Name} has left the conversation.", this.Sockets[id]);
 
-            this.SendAnouncement($"{user.Name} has left the conversation.", this.Sockets[id]);
+                this.Users.Remove(id);
+            }
+            else
+            {
+#if DEBUG
+                Logger.Debug($"Error removing session: User with id '{id}' not found. Maybe last loging request was cancelled or failed.");                 
+#endif
+                Logger.Info($"Removing socket connection with id '{id}'.");
+            }
 
-            this.Users.Remove(id);
             this.Sockets.Remove(id);
         }
 
