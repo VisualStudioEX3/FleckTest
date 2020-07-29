@@ -33,7 +33,6 @@ FYI: The Visual Studio project has defined a port number in debug profile (Proje
 * Implementing ping-pong task or similar in client to check state of the server (to end session in client when the server connection is lost).
 * Basic encryption on socket messages (this would be easy to implement in the [ServerMessage](https://github.com/VisualStudioEX3/FleckTest/blob/master/FleckTest/Models/ServerMessage.cs) model implementation).
 * Additional commands like "ping", to send beep sound to all users or an especific user maybe, for example (this might need to extend the [IUserInputCommandProcessor](https://github.com/VisualStudioEX3/FleckTest/blob/master/FleckTest/Interfaces/IUserInputCommandProcessor.cs) service interface).
-* Create unit tests.
 
 ## Disclaimer
 This is a side project developed as result of a technical test for a job interview and a way to learn new technologies and common practices. Not intended to be a serious project or final product in the future.
