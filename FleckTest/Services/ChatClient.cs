@@ -128,7 +128,7 @@ namespace FleckTest.Services
             string userName = string.Empty;
             while (string.IsNullOrWhiteSpace(userName))
             {
-                Console.Write("Enter a name to log in the chat room (empty name cancel login): ");
+                Console.Write("Enter a name to log in the chat room (empty name to cancel login): ");
                 userName = Console.ReadLine().Trim();
 
                 if (string.IsNullOrEmpty(userName))

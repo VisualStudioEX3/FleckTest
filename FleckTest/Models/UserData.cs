@@ -24,6 +24,22 @@ namespace FleckTest.Models
         public DateTime CreationTime { get; private set; }
         #endregion
 
+        #region Operators
+        public static bool operator ==(UserData a, UserData b)
+        {
+            if (a == null || b == null) return false;
+
+            return a.Name == b.Name &&
+                   a.Color == b.Color &&
+                   a.CreationTime == b.CreationTime;
+        }
+
+        public static bool operator !=(UserData a, UserData b)
+        {
+            return !(a == b);
+        }
+        #endregion
+
         #region Constructors
         /// <summary>
         /// Creates new instance.
@@ -57,7 +73,21 @@ namespace FleckTest.Models
                 this.Color = new ConsoleColorScheme((ConsoleColor)buffer.ReadByte(), (ConsoleColor)buffer.ReadByte());
                 this.CreationTime = new DateTime(buffer.ReadInt64());
             });
-        } 
+        }
+        #endregion
+
+        #region Methods & Functions
+        public override bool Equals(object obj)
+        {
+            if (obj == null && !(obj is UserData)) return false;
+
+            return this == (UserData)obj;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode(); // Keep using the SerializedObject hash code.
+        }
         #endregion
     }
 }

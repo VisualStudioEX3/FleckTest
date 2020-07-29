@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace FleckTest.Models
 {
@@ -27,6 +28,23 @@ namespace FleckTest.Models
         /// Is a server announcement instead of user message?
         /// </summary>
         public bool IsAServerAnouncement { get; private set; }
+        #endregion
+
+        #region Operators
+        public static bool operator ==(ServerMessage a, ServerMessage b)
+        {
+            if (a == null || b == null) return false;
+
+            return a.User == b.User &&
+                   a.Message == b.Message &&
+                   a.IsAServerAnouncement == b.IsAServerAnouncement &&
+                   a.TimeStamp == b.TimeStamp;
+        }
+
+        public static bool operator !=(ServerMessage a, ServerMessage b)
+        {
+            return !(a == b);
+        }
         #endregion
 
         #region Constructors
@@ -68,7 +86,21 @@ namespace FleckTest.Models
                 this.Message = buffer.ReadString();
                 this.IsAServerAnouncement = buffer.ReadBoolean();
             });
-        } 
+        }
+        #endregion
+
+        #region Methods & Functions
+        public override bool Equals(object obj)
+        {
+            if (obj == null && !(obj is ServerMessage)) return false;
+
+            return this == (ServerMessage)obj;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode(); // Keep using the SerializedObject hash code.
+        }
         #endregion
     }
 }

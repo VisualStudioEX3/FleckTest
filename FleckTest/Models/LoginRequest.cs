@@ -19,6 +19,21 @@ namespace FleckTest.Models
         public string UserName { get; private set; }
         #endregion
 
+        #region Operators
+        public static bool operator ==(LoginRequest a, LoginRequest b)
+        {
+            if (a == null || b == null) return false;
+
+            return a.Id == b.Id &&
+                   a.UserName == b.UserName;
+        }
+
+        public static bool operator !=(LoginRequest a, LoginRequest b)
+        {
+            return !(a == b);
+        }
+        #endregion
+
         #region Constructors
         /// <summary>
         /// Creates new instance.
@@ -48,7 +63,21 @@ namespace FleckTest.Models
                 this.Id = new Guid(buffer.ReadBytes(16).AsMemory().ToArray());
                 this.UserName = buffer.ReadString();
             });
-        } 
+        }
+        #endregion
+
+        #region Methods & Functions
+        public override bool Equals(object obj)
+        {
+            if (obj == null && !(obj is LoginRequest)) return false;
+
+            return this == (LoginRequest)obj;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode(); // Keep using the SerializedObject hash code.
+        }
         #endregion
     }
 }
