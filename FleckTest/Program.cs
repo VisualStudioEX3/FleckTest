@@ -12,11 +12,9 @@ namespace FleckTest
         #region Methods & Functions
         static void Main(string[] args)
         {
-            string serverAddress;
-
             Logger.ShowFullExceptions = false;
 
-            if (Program.ReadArgs(args, out serverAddress))
+            if (Program.ReadArgs(args, out string serverAddress))
             {
                 Program.InitializeServices();
                 Program.RunClient(serverAddress, () => Program.RunServer(serverAddress));
@@ -38,8 +36,7 @@ namespace FleckTest
 
             if (args.Length > 0)
             {
-                ushort port;
-                if (ushort.TryParse(args[0], out port))
+                if (ushort.TryParse(args[0], out ushort port))
                 {
                     address = $"ws://127.0.0.1:{port}"; // For this test, will be only working in localhost to run the server and client instances.
                 }

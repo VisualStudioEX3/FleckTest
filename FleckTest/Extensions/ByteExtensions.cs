@@ -20,6 +20,16 @@ namespace FleckTest.Extensions
         }
 
         /// <summary>
+        /// Convert the <see cref="ReadOnlyMemory{byte}"/> data to UTF8 string representation.
+        /// </summary>
+        /// <param name="buffer"><see cref="ReadOnlyMemory{byte}"/> instance.</param>
+        /// <returns>Returns the UTF8 string representation.</returns>
+        public static string GetString(this ReadOnlyMemory<byte> buffer)
+        {
+            return ByteExtensions.GetString(buffer.ToArray());
+        }
+
+        /// <summary>
         /// Convert the byte array to <see cref="int"/> representation.
         /// </summary>
         /// <param name="buffer"><see cref="byte"/> array instance.</param>

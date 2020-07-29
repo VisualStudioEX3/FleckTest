@@ -154,9 +154,7 @@ namespace FleckTest.Services
         /// <param name="id"><see cref="Guid"/> session.</param>
         void RemoveSession(Guid id)
         {
-            UserData user;
-
-            if (this.Users.TryGetValue(id, out user))
+            if (this.Users.TryGetValue(id, out UserData user))
             {
                 this.SendAnouncement($"{user.Name} has left the conversation.", this.Sockets[id]);
 

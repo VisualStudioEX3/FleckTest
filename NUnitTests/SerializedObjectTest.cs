@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using FleckTest.Models;
 
-namespace FleckTest.Tests.SerializedObjects
+namespace FleckTest.Tests
 {
     /// <summary>
     /// Test serialization and deserialization behaviour on serialized models.
