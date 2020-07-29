@@ -3,6 +3,7 @@ A little chat console program to test __Fleck__ websockets library and __IoC__ w
 
 * Fleck: https://github.com/statianzo/Fleck
 * Microsoft.Extensions.DependencyInjection: https://github.com/aspnet/DependencyInjection
+* NUnit for unit testing: https://docs.microsoft.com/es-es/dotnet/core/testing/unit-testing-with-nunit
 
 ![FleckTest.jpg](https://github.com/VisualStudioEX3/FleckTest/blob/master/FleckTest.jpg)
 
@@ -33,8 +34,6 @@ FYI: The Visual Studio project has defined a port number in debug profile (Proje
 * Implementing ping-pong task or similar in client to check state of the server (to end session in client when the server connection is lost).
 * Basic encryption on socket messages (this would be easy to implement in the [ServerMessage](https://github.com/VisualStudioEX3/FleckTest/blob/master/FleckTest/Models/ServerMessage.cs) model implementation).
 * Additional commands like "ping", to send beep sound to all users or an especific user maybe, for example (this might need to extend the [IUserInputCommandProcessor](https://github.com/VisualStudioEX3/FleckTest/blob/master/FleckTest/Interfaces/IUserInputCommandProcessor.cs) service interface).
-* Create unit tests.
-* Create [.editorconfig](https://docs.microsoft.com/es-es/visualstudio/ide/create-portable-custom-editor-options?view=vs-2019) file (suggested by [AzazelN28](https://github.com/AzazelN28)).
 
 ## Disclaimer
 This is a side project developed as result of a technical test for a job interview and a way to learn new technologies and common practices. Not intended to be a serious project or final product in the future.
