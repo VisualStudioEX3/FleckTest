@@ -202,7 +202,7 @@ namespace FleckTest.Services
         /// Sends a binary data to server.
         /// </summary>
         /// <param name="data"><see cref="ReadOnlyMemory{byte}"/> that contain the data.</param>
-        public void SendData(ReadOnlyMemory<byte> data)
+        void SendData(ReadOnlyMemory<byte> data)
         {
             this.SendAsync(data, WebSocketMessageType.Binary);
         }
@@ -224,7 +224,7 @@ namespace FleckTest.Services
         /// Starts a listener in a separate thread.
         /// </summary>
         /// <returns>Returns the <see cref="Task"/> instance of the listener.</returns>
-        public Task StartListener()
+        Task StartListener()
         {
             return Task.Factory.StartNew(async () =>
             {
