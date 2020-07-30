@@ -60,7 +60,7 @@ namespace FleckTest.Models
         {
             this.Deserialize(data, buffer =>
             {
-                this.Id = new Guid(buffer.ReadBytes(16).AsMemory().ToArray());
+                this.Id = new Guid(buffer.ReadBytes(16));
                 this.UserName = buffer.ReadString();
             });
         }
