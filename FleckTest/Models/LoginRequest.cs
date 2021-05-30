@@ -22,8 +22,6 @@ namespace FleckTest.Models
         #region Operators
         public static bool operator ==(LoginRequest a, LoginRequest b)
         {
-            if (a == null || b == null) return false;
-
             return a.Id == b.Id &&
                    a.UserName == b.UserName;
         }

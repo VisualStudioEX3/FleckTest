@@ -33,8 +33,6 @@ namespace FleckTest.Models
         #region Operators
         public static bool operator ==(ServerMessage a, ServerMessage b)
         {
-            if (a == null || b == null) return false;
-
             return a.User == b.User &&
                    a.Message == b.Message &&
                    a.IsAServerAnouncement == b.IsAServerAnouncement &&

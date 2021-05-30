@@ -27,8 +27,6 @@ namespace FleckTest.Models
         #region Operators
         public static bool operator ==(UserData a, UserData b)
         {
-            if (a == null || b == null) return false;
-
             return a.Name == b.Name &&
                    a.Color == b.Color &&
                    a.CreationTime == b.CreationTime;
